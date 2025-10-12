@@ -1,5 +1,6 @@
 import "dotenv/config";
 import mongoose from "mongoose";
+import { connectToDatabase } from "../database/mongoose.ts";
 
 async function main() {
   const uri = process.env.MONGODB_URI;
@@ -10,7 +11,7 @@ async function main() {
 
   try {
     const startedAt = Date.now();
-    await mongoose.connect(uri, { bufferCommands: false });
+    await connectToDatabase();
     const elapsed = Date.now() - startedAt;
 
     const dbName = mongoose.connection?.name || "(unknown)";
