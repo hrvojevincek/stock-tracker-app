@@ -92,7 +92,7 @@ export const sendDailyNewsSummary = inngest.createFunction(
           }
           perUser.push({ user, articles });
         } catch (e) {
-          console.error("daily-news: error preparing user news", user.email, e);
+          console.error("daily-news: error preparing user news", { userId: user.id, err: e });
           perUser.push({ user, articles: [] });
         }
       }
