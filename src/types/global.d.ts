@@ -216,6 +216,16 @@ declare global {
     threshold: number;
     changePercent?: number;
   };
+
+  interface FinnhubProfile {
+    name?: string;
+    ticker?: string;
+    exchange?: string;
+  }
+
+  interface FinnhubSearchResultWithExchange extends FinnhubSearchResult {
+    __exchange?: string;
+  }
 }
 
 export {};
