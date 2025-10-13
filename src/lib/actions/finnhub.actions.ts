@@ -46,20 +46,25 @@ export async function getNews(
     if (cleanSymbols.length > 0) {
       const perSymbolArticles: Record<string, RawNewsArticle[]> = {};
 
-      await Promise.all(
-        cleanSymbols.map(async (sym) => {
-          try {
-            const url = `${FINNHUB_BASE_URL}/company-news?symbol=${encodeURIComponent(
-              sym
-            )}&from=${range.from}&to=${range.to}&token=${token}`;
-            const articles = await fetchJSON<RawNewsArticle[]>(url, 300);
-            perSymbolArticles[sym] = (articles || []).filter(validateArticle);
-          } catch (e) {
-            console.error("Error fetching company news for", sym, e);
-            perSymbolArticles[sym] = [];
-          }
-        })
-      );
+      // Limit concurrent requests to avoid hitting Finnhub rate limits
+      const concurrency = 5;
+      for (let i = 0; i < cleanSymbols.length; i += concurrency) {
+        const batch = cleanSymbols.slice(i, i + concurrency);
+        await Promise.all(
+          batch.map(async (sym) => {
+            try {
+              const url = `${FINNHUB_BASE_URL}/company-news?symbol=${encodeURIComponent(
+                sym
+              )}&from=${range.from}&to=${range.to}&token=${token}`;
+              const articles = await fetchJSON<RawNewsArticle[]>(url, 300);
+              perSymbolArticles[sym] = (articles || []).filter(validateArticle);
+            } catch (e) {
+              console.error("Error fetching company news for", sym, e);
+              perSymbolArticles[sym] = [];
+            }
+          })
+        );
+      }
 
       const collected: MarketNewsArticle[] = [];
       // Round-robin up to 6 picks
