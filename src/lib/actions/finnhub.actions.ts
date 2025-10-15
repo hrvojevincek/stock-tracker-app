@@ -31,8 +31,13 @@ export async function getNews(
   try {
     const range = getDateRange(5);
     const token = process.env.FINNHUB_API_KEY;
+
     if (!token) {
-      throw new Error("FINNHUB API key is not configured");
+      console.error(
+        "getNews error:",
+        new Error("FINNHUB API key is not configured")
+      );
+      return [];
     }
     const cleanSymbols = (symbols || [])
       .map((s) => s?.trim().toUpperCase())
@@ -117,7 +122,6 @@ export const searchStocks = cache(
     try {
       const token = process.env.FINNHUB_API_KEY;
       if (!token) {
-        // If no token, log and return empty to avoid throwing per requirements
         console.error(
           "Error in stock search:",
           new Error("FINNHUB API key is not configured")
