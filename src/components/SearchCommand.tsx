@@ -10,7 +10,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { searchStocks } from "@/lib/actions/finnhub.actions";
 import { useDebounce } from "@/hooks/useDebounce";
 
 export default function SearchCommand({
@@ -43,7 +42,18 @@ export default function SearchCommand({
 
     setLoading(true);
     try {
-      const results = await searchStocks(searchTerm.trim());
+      const params = new URLSearchParams();
+
+      if (searchTerm.trim()) {
+        params.set("q", searchTerm.trim());
+      }
+
+      const response = await fetch(`/api/search?${params.toString()}`);
+
+      if (!response.ok) throw new Error("Search failed");
+
+      const results = await response.json();
+
       setStocks(results);
     } catch {
       setStocks([]);
@@ -52,7 +62,7 @@ export default function SearchCommand({
     }
   }, [isSearchMode, searchTerm, initialStocks]);
 
-  const debouncedSearch = useDebounce(handleSearch, 300);
+  const debouncedSearch = useDebounce(handleSearch, 500);
 
   useEffect(() => {
     debouncedSearch();
