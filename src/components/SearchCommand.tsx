@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, TrendingUp } from "lucide-react";
 import Link from "next/link";
 import { useDebounce } from "@/hooks/useDebounce";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function SearchCommand({
   renderAs = "button",
@@ -97,7 +98,10 @@ export default function SearchCommand({
             placeholder="Search stocks..."
             className="search-input"
           />
-          {loading && <Loader2 className="search-loader" />}
+          {/* {loading && <Loader2 className="search-loader" />}*/}
+          {loading && (
+            <LoadingSpinner className="absolute right-12 top-1/2 -translate-y-1/2" />
+          )}
         </div>
         <CommandList className="search-list">
           {loading ? (
