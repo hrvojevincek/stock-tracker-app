@@ -1,9 +1,15 @@
 "use client";
 import React, { useMemo, useState } from "react";
 
-// Minimal WatchlistButton implementation to satisfy page requirements.
-// This component focuses on UI contract only. It toggles local state and
-// calls onWatchlistChange if provided. Styling hooks match globals.css.
+type WatchlistVariant = "button" | "icon";
+interface WatchlistButtonProps {
+  symbol: string;
+  company?: string;
+  isInWatchlist?: boolean;
+  showTrashIcon?: boolean;
+  type?: WatchlistVariant;
+  onWatchlistChange?: (symbol: string, next: boolean) => void;
+}
 
 const WatchlistButton = ({
   symbol,
